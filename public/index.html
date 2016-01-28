@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<script src="js/jquery.min.js"></script>
+
+	<style>
+
+		
+
+
+		.button-arduino.amarelo {
+			-moz-box-shadow: 0px 1px 0px 0px #fff6af;
+			-webkit-box-shadow: 0px 1px 0px 0px #fff6af;
+			box-shadow: 0px 1px 0px 0px #fff6af;
+			background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ffec64), color-stop(1, #ffab23));
+			background:-moz-linear-gradient(top, #ffec64 5%, #ffab23 100%);
+			background:-webkit-linear-gradient(top, #ffec64 5%, #ffab23 100%);
+			background:-o-linear-gradient(top, #ffec64 5%, #ffab23 100%);
+			background:-ms-linear-gradient(top, #ffec64 5%, #ffab23 100%);
+			background:linear-gradient(to bottom, #ffec64 5%, #ffab23 100%);
+			filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffec64', endColorstr='#ffab23',GradientType=0);
+			background-color:#ffec64;
+			-moz-border-radius:6px;
+			-webkit-border-radius:6px;
+			border-radius:6px;
+			border:1px solid #ffaa22;
+			display:inline-block;
+			cursor:pointer;
+			color:#333333;
+			font-family:Arial;
+			font-size:15px;
+			font-weight:bold;
+			padding:6px 24px;
+			text-decoration:none;
+			text-shadow:0px 1px 0px #ffee66;
+		}
+		.button-arduino.amarelo:hover {
+			background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ffab23), color-stop(1, #ffec64));
+			background:-moz-linear-gradient(top, #ffab23 5%, #ffec64 100%);
+			background:-webkit-linear-gradient(top, #ffab23 5%, #ffec64 100%);
+			background:-o-linear-gradient(top, #ffab23 5%, #ffec64 100%);
+			background:-ms-linear-gradient(top, #ffab23 5%, #ffec64 100%);
+			background:linear-gradient(to bottom, #ffab23 5%, #ffec64 100%);
+			filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffab23', endColorstr='#ffec64',GradientType=0);
+			background-color:#ffab23;
+		}
+		.button-arduino.amarelo:active {
+			position:relative;
+			top:1px;
+		}
+
+
+		.button-arduino.vermelho {
+			-moz-box-shadow: 0px 1px 0px 0px #e67a73;
+			-webkit-box-shadow: 0px 1px 0px 0px #e67a73;
+			box-shadow: 0px 1px 0px 0px #e67a73;
+			background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #e4685d), color-stop(1, #eb675e));
+			background:-moz-linear-gradient(top, #e4685d 5%, #eb675e 100%);
+			background:-webkit-linear-gradient(top, #e4685d 5%, #eb675e 100%);
+			background:-o-linear-gradient(top, #e4685d 5%, #eb675e 100%);
+			background:-ms-linear-gradient(top, #e4685d 5%, #eb675e 100%);
+			background:linear-gradient(to bottom, #e4685d 5%, #eb675e 100%);
+			filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e4685d', endColorstr='#eb675e',GradientType=0);
+			background-color:#e4685d;
+			-moz-border-radius:6px;
+			-webkit-border-radius:6px;
+			border-radius:6px;
+			border:1px solid #eb675e;
+			display:inline-block;
+			cursor:pointer;
+			color:#FFFFFF;
+			font-family:Arial;
+			font-size:15px;
+			font-weight:bold;
+			padding:6px 24px;
+			text-decoration:none;
+			text-shadow:0px 1px 0px #b23d35;
+		}
+		.button-arduino.vermelho:hover {
+			background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #eb675e), color-stop(1, #e4685d));
+			background:-moz-linear-gradient(top, #eb675e 5%, #e4685d 100%);
+			background:-webkit-linear-gradient(top, #eb675e 5%, #e4685d 100%);
+			background:-o-linear-gradient(top, #eb675e 5%, #e4685d 100%);
+			background:-ms-linear-gradient(top, #eb675e 5%, #e4685d 100%);
+			background:linear-gradient(to bottom, #eb675e 5%, #e4685d 100%);
+			filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#eb675e', endColorstr='#e4685d',GradientType=0);
+			background-color:#eb675e;
+		}
+		.button-arduino.vermelho:active {
+			position:relative;
+			top:1px;
+		}
+
+
+	</style>
+</head>
+<body>
+	<h2>Cor Atual <span id="corAtual"></span></h2>
+	<button class="button-arduino amarelo" data-value="amarelo">Amarelo</button>
+    <button class="button-arduino verde" data-value="verde">Verde</button>
+    <button class="button-arduino azul" data-value="azul">Azul</button>
+    <button class="button-arduino vermelho" data-value="vermelho">Vermelho</button>
+
+	<script>
+		$(document).ready(function() {
+			var conn = new WebSocket('ws://localhost:8081');
+			conn.onopen = function(e) {
+			    console.log("Websocket Server Arduino OK!");
+			};
+
+			conn.onmessage = function(e) {
+
+				data = JSON.parse(e.data);
+				if (data.type == 'arduino') {
+					$("#corAtual").html(data.command);
+
+				}
+			};
+
+			$(".button-arduino").on('tap click', function(e) {
+				e.preventDefault();
+				$("#corAtual").html($(this).attr('data-value'));
+				objEnviar = {};
+				objEnviar.command = $(this).attr('data-value');
+				objEnviar.type = 'arduino';
+				conn.send(JSON.stringify(objEnviar));
+			});
+		});
+		
+	</script>
+</body>
+</html>
